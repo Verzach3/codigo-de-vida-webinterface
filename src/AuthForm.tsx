@@ -55,8 +55,8 @@ export function AuthenticationForm({
       setLoading(false);
       setError(
         formType === 'register'
-          ? 'User with this email already exists'
-          : 'User with this email does not exist'
+          ? 'Un usuario con este correo ya existe'
+          : 'No existe el usuario'
       );
     }, 3000);
   };
@@ -78,14 +78,14 @@ export function AuthenticationForm({
             <TextInput
               data-autofocus
               required
-              placeholder="Your first name"
+              placeholder="Primer Nombre"
               label="First name"
               {...form.getInputProps('firstName')}
             />
 
             <TextInput
               required
-              placeholder="Your last name"
+              placeholder="Apellidos"
               label="Last name"
               {...form.getInputProps('lastName')}
             />
@@ -95,8 +95,8 @@ export function AuthenticationForm({
         <TextInput
           mt="md"
           required
-          placeholder="Your email"
-          label="Email"
+          placeholder="Tu Correo"
+          label="Correo"
           icon={<IconAt size={16} stroke={1.5} />}
           {...form.getInputProps('email')}
         />
@@ -104,7 +104,7 @@ export function AuthenticationForm({
         <PasswordInput
           mt="md"
           required
-          placeholder="Password"
+          placeholder="Constraseña"
           label="Password"
           icon={<IconLock size={16} stroke={1.5} />}
           {...form.getInputProps('password')}
@@ -114,7 +114,7 @@ export function AuthenticationForm({
           <PasswordInput
             mt="md"
             required
-            label="Confirm Password"
+            label="Confirmar contraseña"
             placeholder="Confirm password"
             icon={<IconLock size={16} stroke={1.5} />}
             {...form.getInputProps('confirmPassword')}
@@ -124,7 +124,7 @@ export function AuthenticationForm({
         {formType === 'register' && (
           <Checkbox
             mt="xl"
-            label="I agree to sell my soul and privacy to this corporation"
+            label="Acepto los terminos"
             {...form.getInputProps('termsOfService', { type: 'checkbox' })}
           />
         )}
