@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { useForm } from '@mantine/form';
-import { IconLock, IconAt } from '@tabler/icons';
+import React, { useState } from "react";
+import { useForm } from "@mantine/form";
+import { IconLock, IconAt } from "@tabler/icons";
 import {
   TextInput,
   PasswordInput,
@@ -12,7 +12,10 @@ import {
   LoadingOverlay,
   Anchor,
   useMantineTheme,
-} from '@mantine/core';
+} from "@mantine/core";
+import Pocketbase from "pocketbase";
+import { IS_LOGGED_IN, SERVER_URL, SHOW_LOGIN } from "./state/State";
+import { useRecoilState, useSetRecoilState } from "recoil";
 
 export interface AuthenticationFormProps {
   noShadow?: boolean;
@@ -27,67 +30,77 @@ export function AuthenticationForm({
   noSubmit,
   style,
 }: AuthenticationFormProps) {
-  const [formType, setFormType] = useState<'register' | 'login'>("login");
+  const [formType, setFormType] = useState<"register" | "login">("login");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isLoggedIn, setIsLoggedIn] = useRecoilState(IS_LOGGED_IN)
+  const setShowLogin = useSetRecoilState(SHOW_LOGIN);
   const theme = useMantineTheme();
 
   const toggleFormType = () => {
-    setFormType((current) => (current === 'register' ? 'login' : 'register'));
+    setFormType((current) => (current === "register" ? "login" : "register"));
     setError(null);
   };
 
   const form = useForm({
     initialValues: {
-      firstName: '',
-      lastName: '',
-      email: '',
-      password: '',
-      confirmPassword: '',
+      firstName: "",
+      lastName: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
       termsOfService: true,
+      admin: false,
     },
   });
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     setLoading(true);
-    setError(null);
-    setTimeout(() => {
+    const client = new Pocketbase(SERVER_URL);
+    try {
+      if (form.values.admin) {
+        await client.admins.authViaEmail(form.values.email, form.values.password);
+      } else {
+        await client.users.authViaEmail(form.values.email, form.values.password);
+      }
+    } catch (error) {
+      setError("Sorry, we couldn't process your request. Please try again.");
       setLoading(false);
-      setError(
-        formType === 'register'
-          ? 'Un usuario con este correo ya existe'
-          : 'No existe el usuario'
-      );
-    }, 3000);
+      return;
+    }
+    setIsLoggedIn(true);
+    setShowLogin(false)
+    setLoading(false);
   };
 
   return (
     <Paper
-      p={noPadding ? 0 : 'lg'}
-      shadow={noShadow ? undefined : 'sm'}
+      p={noPadding ? 0 : "lg"}
+      shadow={noShadow ? undefined : "sm"}
       style={{
-        position: 'relative',
-        backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[7] : theme.white,
+        position: "relative",
+        backgroundColor:
+          theme.colorScheme === "dark" ? theme.colors.dark[7] : theme.white,
         ...style,
       }}
     >
       <form onSubmit={form.onSubmit(handleSubmit)}>
         <LoadingOverlay visible={loading} />
-        {formType === 'register' && (
+        {formType === "register" && (
           <Group grow>
             <TextInput
               data-autofocus
               required
               placeholder="Primer Nombre"
               label="First name"
-              {...form.getInputProps('firstName')}
+              {...form.getInputProps("firstName")}
             />
 
             <TextInput
               required
               placeholder="Apellidos"
               label="Last name"
-              {...form.getInputProps('lastName')}
+              {...form.getInputProps("lastName")}
             />
           </Group>
         )}
@@ -98,7 +111,7 @@ export function AuthenticationForm({
           placeholder="Tu Correo"
           label="Correo"
           icon={<IconAt size={16} stroke={1.5} />}
-          {...form.getInputProps('email')}
+          {...form.getInputProps("email")}
         />
 
         <PasswordInput
@@ -107,25 +120,31 @@ export function AuthenticationForm({
           placeholder="Constraseña"
           label="Password"
           icon={<IconLock size={16} stroke={1.5} />}
-          {...form.getInputProps('password')}
+          {...form.getInputProps("password")}
         />
 
-        {formType === 'register' && (
+        <Checkbox
+          mt="xl"
+          label="Admin?"
+          {...form.getInputProps("admin", { type: "checkbox" })}
+        />
+
+        {formType === "register" && (
           <PasswordInput
             mt="md"
             required
             label="Confirmar contraseña"
             placeholder="Confirm password"
             icon={<IconLock size={16} stroke={1.5} />}
-            {...form.getInputProps('confirmPassword')}
+            {...form.getInputProps("confirmPassword")}
           />
         )}
 
-        {formType === 'register' && (
+        {formType === "register" && (
           <Checkbox
             mt="xl"
             label="Acepto los terminos"
-            {...form.getInputProps('termsOfService', { type: 'checkbox' })}
+            {...form.getInputProps("termsOfService", { type: "checkbox" })}
           />
         )}
 
@@ -150,7 +169,7 @@ export function AuthenticationForm({
             </Anchor> */}
 
             <Button color="blue" type="submit">
-              {formType === 'register' ? 'Register' : 'Login'}
+              {formType === "register" ? "Register" : "Login"}
             </Button>
           </Group>
         )}

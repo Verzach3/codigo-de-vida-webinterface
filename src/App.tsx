@@ -16,6 +16,7 @@ import { Route, Routes } from 'react-router-dom';
 import { AuthenticationForm } from './AuthForm';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { SHOW_LOGIN } from './state/State';
+import PatientsManager from './PatientsManager';
 
 export default function App() {
   const theme = useMantineTheme();
@@ -69,9 +70,9 @@ export default function App() {
       }
       >
       <Routes>
-        <Route path='/' element={<Text>test</Text>}/>
+        <Route path='/' element={<PatientsManager/>}/>
         <Route path='/users' element={<Text>Usuarios</Text>}/>
-        <Route path='/settings' element={<AuthenticationForm/>} />
+        <Route path='/settings' element={<Text>Ajustes</Text>} />
 
       </Routes>
     </AppShell>
