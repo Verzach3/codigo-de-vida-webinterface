@@ -120,6 +120,7 @@ export function NavbarSimple(props: any) {
       })}
       href={item.link}
       key={item.label}
+      style={{ marginTop: 10}}
       onClick={(event) => {
         event.preventDefault();
         setActive(item.label);

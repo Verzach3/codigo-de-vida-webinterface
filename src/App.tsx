@@ -17,6 +17,9 @@ import { AuthenticationForm } from './AuthForm';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { SHOW_LOGIN } from './state/State';
 import PatientsManager from './PatientsManager';
+import pocketbaseEs from 'pocketbase';
+import UsersTable from './UsersTable';
+import { dummy } from './assets/dumnmis';
 
 export default function App() {
   const theme = useMantineTheme();
@@ -71,7 +74,7 @@ export default function App() {
       >
       <Routes>
         <Route path='/' element={<PatientsManager/>}/>
-        <Route path='/users' element={<Text>Usuarios</Text>}/>
+        <Route path='/users' element={<UsersTable data={dummy.data} />}/>
         <Route path='/settings' element={<Text>Ajustes</Text>} />
 
       </Routes>

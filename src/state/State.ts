@@ -1,6 +1,6 @@
 import { atom } from "recoil";
 
-export const SERVER_URL ="http://127.0.0.1:8090"
+export const SERVER_URL ="http://20.118.130.63:80"
 export const DEFAULT_URL = atom({
   key: "url",
   default: SERVER_URL,
